@@ -51,7 +51,16 @@ const Login = () => {
         navigate('/dashboard')
       }
     } catch (err) {
-      setError(err.message || 'Login failed. Please check your credentials.')
+      // Check if it's a "user not found" error
+      const isUserNotFound = err.graphQLErrors?.some(
+        (e) => e.extensions?.code === 'USER_NOT_FOUND'
+      ) || err.message?.includes('No account exists')
+      
+      if (isUserNotFound) {
+        setError('NO_ACCOUNT_EXISTS')
+      } else {
+        setError(err.message || 'Login failed. Please check your credentials.')
+      }
     } finally {
       setLoading(false)
     }
@@ -163,7 +172,24 @@ const Login = () => {
         <Box component="form" onSubmit={handleSubmit}>
           {error && (
             <Alert severity="error" sx={{ mb: 3 }}>
-              {error}
+              {error === 'NO_ACCOUNT_EXISTS' ? (
+                <>
+                  No account exists with this email.{' '}
+                  <Link
+                    component={RouterLink}
+                    to="/register"
+                    sx={{
+                      color: 'inherit',
+                      fontWeight: 600,
+                      textDecoration: 'underline',
+                    }}
+                  >
+                    Create a new account
+                  </Link>
+                </>
+              ) : (
+                error
+              )}
             </Alert>
           )}
 
