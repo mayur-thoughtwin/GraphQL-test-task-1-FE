@@ -177,7 +177,7 @@ const EmployeeForm = ({ employee, subjects, availableUsers, onSubmit, onClose })
 
           <TextField
             fullWidth
-            label="Full Name *"
+            label="Full Name"
             name="name"
             value={formData.name}
             onChange={handleChange}
